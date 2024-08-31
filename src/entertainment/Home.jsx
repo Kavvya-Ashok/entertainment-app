@@ -10,6 +10,7 @@ import '@mantine/carousel/styles.css';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { POSTER_BASE_URL } from './Environment';
 import '../App.css';
+import MoviesList from './MoviesList';
 
 const Home = () => {
 
@@ -22,7 +23,16 @@ const Home = () => {
 
   const { data: shows } = useQuery({
     queryKey: ['shows'],
-    queryFn: () => fetchMovies(`/trending/tv/week`)
+    queryFn: () => fetchMovies(`/trending/tv/week`),
+    select: (data) => {
+        console.log(data)
+        return data.map((value) => {
+          return {
+            poster_path: value.poster_path,
+            title: value.name
+          }
+        })
+    }
   });
 
   const { data: thrillerMovies } = useQuery({
@@ -48,97 +58,13 @@ const Home = () => {
   return (
     <Container fluid>
       <Title order={2} style={{ textAlign: 'left' }}>Popular Movies</Title>
-      <Carousel 
-        slideSize="25%" 
-        slideGap="md"
-        slidesToScroll={1}
-        align="start"
-      >
-        {movies != undefined && movies.map((movie, index) => (
-          <CarouselSlide key={index}>
-            <Card>
-              <Card.Section>
-                <Image 
-                  src={`${POSTER_BASE_URL}${movie.poster_path}`} 
-                  alt={movie.title}  
-                  onClick={() => handleMovie(movie.id)}
-                  className='image'
-                />
-              </Card.Section>
-              <Text weight={500}>{movie.title}</Text>
-            </Card>
-          </CarouselSlide>
-        ))}
-      </Carousel>
+      <MoviesList movies={movies} onClick={handleMovie}/>
       <Title order={2} style={{ textAlign: 'left' }}>Trending TV Shows</Title>
-      <Carousel 
-        slideSize="25%" 
-        slideGap="md"
-        slidesToScroll={1}
-        align="start"
-      >
-        {shows != undefined && shows.map((show, index) => (
-          <CarouselSlide key={index}>
-            <Card>
-              <Card.Section>
-                <Image 
-                  src={`${POSTER_BASE_URL}${show.poster_path}`} 
-                  alt={show.name}
-                  onClick={() => handleTvShow(show.id)}
-                  className='image'
-                />
-              </Card.Section>
-              <Text weight={500}>{show.name}</Text>
-            </Card>
-          </CarouselSlide>
-        ))}
-      </Carousel>
+      <MoviesList movies={shows} onClick={handleTvShow}/>
       <Title order={2} style={{ textAlign: 'left' }}>Thriller Tales</Title>
-      <Carousel 
-        slideSize="25%" 
-        slideGap="md"
-        slidesToScroll={1}
-        align="start"
-      >
-        {thrillerMovies != undefined && thrillerMovies.map((movie, index) => (
-          <CarouselSlide key={index}>
-            <Card>
-              <Card.Section>
-                <Image 
-                  src={`${POSTER_BASE_URL}${movie.poster_path}`} 
-                  alt={movie.title}  
-                  onClick={() => handleMovie(movie.id)}
-                  className='image'
-                />
-              </Card.Section>
-              <Text weight={500}>{movie.title}</Text>
-            </Card>
-          </CarouselSlide>
-        ))}
-      </Carousel>
+      <MoviesList movies={thrillerMovies} onClick={handleMovie}/>
       <Title order={2} style={{ textAlign: 'left' }}>Comedy Carnival</Title>
-      <Carousel 
-        slideSize="25%" 
-        slideGap="md"
-        slidesToScroll={1}
-        align="start"
-      >
-        {comedyMovies != undefined && comedyMovies.map((movie, index) => (
-          <CarouselSlide key={index}>
-            <Card>
-              <Card.Section>
-                <Image 
-                  src={`${POSTER_BASE_URL}${movie.poster_path}`} 
-                  alt={movie.title}  
-                  onClick={() => handleMovie(movie.id)}
-                  className='image'
-                />
-              </Card.Section>
-              <Text weight={500}>{movie.title}</Text>
-            </Card>
-          </CarouselSlide>
-        ))}
-      </Carousel>
+      <MoviesList movies = {comedyMovies} onClick={handleMovie} />
     </Container>
   );
 }
